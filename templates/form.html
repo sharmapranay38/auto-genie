@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AutoML Trainer</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <h2>AutoML Trainer</h2>
+    <form action="/train" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="file">CSV File</label>
+            <input type="file" class="form-control" id="file" name="file" required>
+        </div>
+        <div class="form-group">
+            <label for="target">Target Column</label>
+            <input type="text" class="form-control" id="target" name="target" required>
+        </div>
+        <div class="form-group">
+            <label for="task">Task Type</label>
+            <select class="form-control" id="task" name="task">
+                <option value="">Auto</option>
+                <option value="classification">Classification</option>
+                <option value="regression">Regression</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="test_size">Test Size (0-1)</label>
+            <input type="number" step="0.01" class="form-control" id="test_size" name="test_size" value="0.2">
+        </div>
+        <button type="submit" class="btn btn-primary">Train Model</button>
+    </form>
+</div>
+</body>
+</html> 

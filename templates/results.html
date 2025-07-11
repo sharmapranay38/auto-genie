@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AutoML Results</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <h2>Training Results</h2>
+    <h4>Best Model: {{ best_model_name }}</h4>
+    <div class="mt-4">
+        <h5>Model Metrics</h5>
+        {{ metrics_table | safe }}
+    </div>
+    <div class="mt-4">
+        <a href="/download/{{ model_path }}" class="btn btn-success">Download Best Model</a>
+    </div>
+    <div class="mt-4">
+        <a href="/" class="btn btn-secondary">Train Another Model</a>
+    </div>
+</div>
+</body>
+</html> 

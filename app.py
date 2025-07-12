@@ -13,6 +13,7 @@ from train_models import train_and_return_models
 from evaluate import evaluate_models, print_model_comparison
 import joblib
 import threading
+import json
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
@@ -21,8 +22,19 @@ templates = Jinja2Templates(directory="templates")
 if not os.path.exists("templates"):
     os.makedirs("templates")
 
-# Global job store
-jobs = {}
+JOBS_DIR = "jobs"
+os.makedirs(JOBS_DIR, exist_ok=True)
+
+def save_job(job_id, data):
+    with open(os.path.join(JOBS_DIR, f"{job_id}.json"), "w") as f:
+        json.dump(data, f)
+
+def load_job(job_id):
+    try:
+        with open(os.path.join(JOBS_DIR, f"{job_id}.json"), "r") as f:
+            return json.load(f)
+    except Exception:
+        return None
 
 @app.get("/", response_class=HTMLResponse)
 def form_get(request: Request):
@@ -35,7 +47,8 @@ def train(request: Request,
           task: str = Form(None),
           test_size: float = Form(0.2)):
     job_id = str(uuid.uuid4())
-    jobs[job_id] = {"status": "running", "result": None}
+    job_data = {"status": "running", "result": None}
+    save_job(job_id, job_data)
     file_id = job_id
     file_path = f"uploaded_{file_id}.csv"
     with open(file_path, "wb") as buffer:
@@ -58,21 +71,24 @@ def train(request: Request,
             joblib.dump(preprocessor, f"preprocessor_{file_id}.pkl")
             df_results = pd.DataFrame(results).T
             metrics_html = df_results.to_html(classes="table table-bordered", float_format="{:.4f}".format)
-            jobs[job_id]["status"] = "done"
-            jobs[job_id]["result"] = {
-                "metrics_table": metrics_html,
-                "model_path": model_path,
-                "best_model_name": best_model_name
+            job_data = {
+                "status": "done",
+                "result": {
+                    "metrics_table": metrics_html,
+                    "model_path": model_path,
+                    "best_model_name": best_model_name
+                }
             }
+            save_job(job_id, job_data)
         except Exception as e:
-            jobs[job_id]["status"] = "error"
-            jobs[job_id]["result"] = str(e)
+            job_data = {"status": "error", "result": str(e)}
+            save_job(job_id, job_data)
     threading.Thread(target=background_train, daemon=True).start()
     return RedirectResponse(url=f"/status/{job_id}", status_code=303)
 
 @app.get("/status/{job_id}", response_class=HTMLResponse)
 def check_status(request: Request, job_id: str):
-    job = jobs.get(job_id)
+    job = load_job(job_id)
     if not job:
         return HTMLResponse("<h3>Invalid job ID.</h3>", status_code=404)
     if job["status"] == "running":

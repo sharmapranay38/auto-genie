@@ -1,35 +1,104 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>AutoML Trainer</title>
+    <title>Auto Genie - AutoML Trainer</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <style>
+        body { background: #f7f9fa; }
+        .brand-header { background: #4f8cff; color: white; padding: 2rem 0; border-radius: 0 0 2rem 2rem; box-shadow: 0 2px 8px #0001; }
+        .brand-title { font-size: 2.5rem; font-weight: bold; letter-spacing: 2px; }
+        .brand-tagline { font-size: 1.2rem; color: #e0eaff; }
+        .card { border-radius: 1rem; box-shadow: 0 2px 8px #0002; }
+        .model-desc { font-size: 0.95rem; color: #555; margin-left: 1.5rem; }
+        .form-section { margin-top: 2rem; }
+        .btn-primary { background: #4f8cff; border: none; }
+        .btn-primary:hover { background: #2566d8; }
+    </style>
 </head>
 <body>
-<div class="container mt-5">
-    <h2>AutoML Trainer</h2>
-    <form action="/train" method="post" enctype="multipart/form-data">
-        <div class="form-group">
-            <label for="file">CSV File</label>
-            <input type="file" class="form-control" id="file" name="file" required>
+<div class="brand-header text-center mb-5">
+    <div class="brand-title">Auto Genie</div>
+    <div class="brand-tagline">Your magical assistant for automated machine learning</div>
+</div>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card p-4">
+                <h3 class="mb-4 text-center">Train a Model</h3>
+                <form action="/train" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="file">CSV File</label>
+                        <input type="file" class="form-control" id="file" name="file" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="target">Target Column</label>
+                        <input type="text" class="form-control" id="target" name="target" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="task">Task Type</label>
+                        <select class="form-control" id="task" name="task">
+                            <option value="">Auto</option>
+                            <option value="classification">Classification</option>
+                            <option value="regression">Regression</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="test_size">Test Size (0-1)</label>
+                        <input type="number" step="0.01" class="form-control" id="test_size" name="test_size" value="0.2">
+                    </div>
+                    <div class="form-group">
+                        <label>Choose Models to Train</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="models" value="LogisticRegression" id="modelLogReg" checked>
+                            <label class="form-check-label" for="modelLogReg">Logistic Regression</label>
+                            <span class="model-desc">- Simple, interpretable linear model for classification.</span>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="models" value="RandomForest" id="modelRF" checked>
+                            <label class="form-check-label" for="modelRF">Random Forest</label>
+                            <span class="model-desc">- Ensemble of decision trees, robust to overfitting.</span>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="models" value="XGBoost" id="modelXGB" checked>
+                            <label class="form-check-label" for="modelXGB">XGBoost</label>
+                            <span class="model-desc">- Powerful gradient boosting, great for tabular data.</span>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="models" value="KNN" id="modelKNN" checked>
+                            <label class="form-check-label" for="modelKNN">K-Nearest Neighbors</label>
+                            <span class="model-desc">- Simple, instance-based learner, sensitive to scaling.</span>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="models" value="SVM" id="modelSVM" checked>
+                            <label class="form-check-label" for="modelSVM">Support Vector Machine</label>
+                            <span class="model-desc">- Effective for high-dimensional spaces, can be slow.</span>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="models" value="DecisionTree" id="modelDT" checked>
+                            <label class="form-check-label" for="modelDT">Decision Tree</label>
+                            <span class="model-desc">- Fast, interpretable, but can overfit.</span>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="models" value="LightGBM" id="modelLGBM" checked>
+                            <label class="form-check-label" for="modelLGBM">LightGBM</label>
+                            <span class="model-desc">- Fast, efficient gradient boosting (if installed).</span>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="models" value="LinearRegression" id="modelLinReg">
+                            <label class="form-check-label" for="modelLinReg">Linear Regression</label>
+                            <span class="model-desc">- Simple regression model (for regression tasks).</span>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="models" value="SVR" id="modelSVR">
+                            <label class="form-check-label" for="modelSVR">Support Vector Regression</label>
+                            <span class="model-desc">- SVM for regression tasks.</span>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block mt-4">Train Model</button>
+                </form>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="target">Target Column</label>
-            <input type="text" class="form-control" id="target" name="target" required>
-        </div>
-        <div class="form-group">
-            <label for="task">Task Type</label>
-            <select class="form-control" id="task" name="task">
-                <option value="">Auto</option>
-                <option value="classification">Classification</option>
-                <option value="regression">Regression</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="test_size">Test Size (0-1)</label>
-            <input type="number" step="0.01" class="form-control" id="test_size" name="test_size" value="0.2">
-        </div>
-        <button type="submit" class="btn btn-primary">Train Model</button>
-    </form>
+    </div>
 </div>
 </body>
 </html> 
